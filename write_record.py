@@ -19,6 +19,8 @@ def main():
         num_of_recordfile = num_of_total_image // num_per_tfrecord + 1
     else:
         num_of_recordfile = num_of_total_image // num_per_tfrecord
+        
+    num_per_tfrecord_final = num_of_total_image - num_per_tfrecord * (num_of_recordfile - 1)
 
     print('number of total TFrecordfile: {}'.format(num_of_recordfile))
 
@@ -28,8 +30,13 @@ def main():
         write = tf.python_io.TFRecordWriter(tfrecord_filename)
 
         print('Writing recordfile_{}'.format(i+1))
+        
+        if i == num_of_recordfile - 1:
+            loop_buf = num_per_tfrecord_final
+        else :
+            loop_buf = num_per_tfrecord
 
-        for image_index in range(num_per_tfrecord):
+        for image_index in range(loop_buf):
             image = data_set[image_index + i*num_per_tfrecord].flatten()
 
             example = tf.train.Example(
